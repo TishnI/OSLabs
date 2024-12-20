@@ -29,7 +29,7 @@ void* Deliver(void* threadData)
         printf("provided\n");
         pthread_cond_signal(&(data->cond));
         pthread_mutex_unlock(&(data->lock));
-        sleep(1);
+        //sleep(1);
     }
 
 }
@@ -48,7 +48,7 @@ void* Get(void* threadData)
         data->ready = 0;
         printf("consumed\n");
         pthread_mutex_unlock(&(data->lock));
-        sleep(1);
+        //sleep(1);
     }
 }
 
@@ -62,18 +62,17 @@ int main(int argc, char *argv[])
     data->lock = lock;
     data->ready = 0;
 
-    pthread_t* supplierThread = (pthread_t*)malloc(sizeof(pthread_t));
-    pthread_t* consumerThread = (pthread_t*)malloc(sizeof(pthread_t));
+    pthread_t supplierThread;
+    pthread_t consumerThread;
 
-    pthread_create(supplierThread, NULL, Deliver, &data);
-    pthread_create(consumerThread, NULL, Get, &data);
+    pthread_create(&supplierThread, NULL, Deliver, data);
+    pthread_create(&consumerThread, NULL, Get, data);
 
-    pthread_join(*supplierThread,NULL);
-    pthread_join(*consumerThread, NULL);
+    pthread_join(supplierThread,NULL);
+    pthread_join(consumerThread, NULL);
 
     free(data);
-    free(supplierThread);
-    free(consumerThread);
+
 
     return 0;
 }
